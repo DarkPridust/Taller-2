@@ -1,0 +1,133 @@
+@startuml
+class ListaHabitante{
+    -listaHabitante: Habitante[]
+    -cantActualHab: int
+    -cantMaxHab: int
+    +ListaHabitante(cantMaxHab: int)
+    +agregarHabitante(h: Habitante): boolean
+    +buscarHabitante(pos: int): Habitante
+}
+
+ListaHabitante"1"o--->"0..100"Habitante: posee
+
+abstract class Habitante{
+    -rut: String
+    -nombre: String
+    -apellido: String
+    -nombreUsuario String
+    -password: String
+    -rango: String
+    +Habitante(rut: String, nombre: String,
+    apellido: String, nombreUsuario String,
+    password: String, rango: String)
+    +gets()
+    +sets()
+}
+
+Explorador"1"---|>"1"Habitante: hereda
+Médico"1"---|>"1"Habitante: hereda
+Defensor"1"---|>"1"Habitante: hereda
+
+class Explorador{
+    -nivelSigilo: int
+    +calcularConsumoRecursos(): double
+    +calcularProbabilidadExito(): double
+    +describirHabilidad(): String
+    +gets()
+    +sets()
+}
+
+class Médico{
+    -capacidadMedica: int
+    +calcularConsumoRecursos(): double
+    +calcularProbabilidadExito(): double
+    +describirHabilidad(): String
+    +gets()
+    +sets()
+
+}
+
+class Defensor{
+    -fuerza: int
+    +calcularConsumoRecursos(): double
+    +calcularProbabilidadExito(): double
+    +describirHabilidad(): String
+    +gets()
+    +sets()
+}
+
+interface IAccionSupervivencia{
+    +calcularConsumoRecursos(): double
+    +calcularProbabilidadExito(): double
+    +describirHabilidad(): String
+}
+Habitante"1"...|>"1"IAccionSupervivencia: implementa
+
+class ListaNexoMision{
+    -head: NodoMision
+    -cantElementos: int
+}
+ListaNexoMision"1"--->"0..1"NodoMision: tiene
+
+class NodoMision{
+    -dato: Mision
+    -siguiente: NodoMision
+    +NodoMision(dato: Mision)
+    +gets()
+    +sets()
+}
+NodoMision"1"--->"1"NodoMision: Siguiente
+NodoMision"1"--->"1"Mision: tiene
+
+class Mision{
+    -rutHabitante: String
+    -idSuministro: int
+    -fecha: String
+    -cantidadRecuperada: int
+    -resultado: String
+    +Mision(rutHabitante: String, idSuministro: int,
+     fecha: String, cantidadRecuperada: int, resultado: String)
+    +gets()
+    +sets()
+}
+
+class ListaSuministro{
+    -listaSuministro: Habitante[]
+    -cantActualSum: int
+    -cantMaxSum: int
+    +ListaSuministro(cantMaxSum: int)
+    +agregarSuministro(s: Suministro): boolean
+    +buscarSuministro(pos: int): Suministro
+}
+ListaSuministro"1"o--->"0..100"Suministro: posee
+
+class Suministro{
+    -id: int
+    -tipo: String
+    -descripcion: String
+    -peso: double
+    -cantidad: int
+    -estado: String
+    +Suministro(id: int, tipo: String, descripcion: String, peso: double, cantidad: int, estado: String)
+    +gets()
+    +sets()
+}
+
+
+class ISistemaRefugioExodo{
+    -listaHabitante: ListaHabitante
+    -listaSuministro: ListaSuministro
+    -listaNexoMision: ListaNexoMision
+    +ISistemaRefugioExodo():
+}
+ISistemaRefugioExodo"1"...|>"1"SistemaRefugioExodo: implementa
+ISistemaRefugioExodo"1"--->"1"ListaNexoMision: posee
+ISistemaRefugioExodo"1"--->"1"ListaSuministro: posee
+ISistemaRefugioExodo"1"--->"1"ListaHabitante: posee
+
+interface SistemaRefugioExodo{
+    +cargaDeDatos(): void
+    +datosCargados(): boolean
+    +registrarSuperviviente(): void
+}
+@enduml

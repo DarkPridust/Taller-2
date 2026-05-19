@@ -1,0 +1,38 @@
+@startuml
+
+left to right direction
+entity Mision{
+    rut habitante
+    id suministro
+    fecha
+    cantidad recuperada
+    resultado
+}
+
+entity Habitante{
+    rut
+    nombre
+    apellido
+    nombreUsuario
+    contrasenia
+}
+
+entity Suministro{
+    id
+    tipo
+    descripcion
+    peso
+    cantidad
+    estado
+}
+
+
+Habitante"1"--->"1"Suministro: admministra >
+note on link: Solo los supervivientes con rango leyenda\npueden administrar los suministros as N1
+
+Habitante"1"--->"1"Mision: participa >
+
+Mision"1"--->"1"Suministro: obtiene >
+
+
+@enduml
