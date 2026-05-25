@@ -1,9 +1,12 @@
+import java.time.LocalDate;
+
 public class Mision {
     private Habitante habitante;
     private Suministro suministro;
     private String fecha;
     private int cantidadRecuperada;
     private String resultado;
+    private LocalDate fechaHoy;
 
     public Mision(Habitante habitante, Suministro suministro, String fecha, int cantidadRecuperada, String resultado) {
         this.habitante = habitante;
@@ -11,6 +14,7 @@ public class Mision {
         this.fecha = fecha;
         this.cantidadRecuperada = cantidadRecuperada;
         this.resultado = resultado;
+        this.fechaHoy = LocalDate.now();
     }
 
     public Habitante getHabitante() {

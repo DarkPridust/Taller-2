@@ -1,6 +1,6 @@
 @startuml
-class ListaHabitante{
-    -listaHabitante: Habitante[]
+class ListaHabitantes{
+    -listaHabitantes: Habitante[]
     -cantActualHab: int
     -cantMaxHab: int
     +ListaHabitante(cantMaxHab: int)
@@ -8,40 +8,40 @@ class ListaHabitante{
     +buscarHabitante(pos: int): Habitante
 }
 
-ListaHabitante"1"o--->"0..100"Habitante: posee
+ListaHabitantes"1"o--->"0..100"Habitante: posee
 
 abstract class Habitante{
     -rut: String
     -nombre: String
     -apellido: String
-    -nombreUsuario String
+    -username: String
     -password: String
-    -rango: String
-    +Habitante(rut: String, nombre: String,
-    apellido: String, nombreUsuario String,
-    password: String, rango: String)
+    -rango: Enum
+    +Habitante(rut: String, nombre: String, apellido: String, username: String,
+    password: String, rango: Enum)
+    +calcularConsumoRecursos(): double
+    +calcularProbabilidadExito(): double
+    +describirHabilidad(): String
     +gets()
     +sets()
 }
 
 Explorador"1"---|>"1"Habitante: hereda
-Médico"1"---|>"1"Habitante: hereda
+Medico"1"---|>"1"Habitante: hereda
 Defensor"1"---|>"1"Habitante: hereda
 
 class Explorador{
     -nivelSigilo: int
-    +calcularConsumoRecursos(): double
-    +calcularProbabilidadExito(): double
-    +describirHabilidad(): String
+    +Explorador(rut: String, nombre: String, apellido: String, username: String,
+                    password: String, rango: Enum, nivelSigilo: int)
     +gets()
     +sets()
 }
 
-class Médico{
+class Medico{
     -capacidadMedica: int
-    +calcularConsumoRecursos(): double
-    +calcularProbabilidadExito(): double
-    +describirHabilidad(): String
+    +Medico(rut: String, nombre: String, apellido: String, username: String,
+                password: String, rango: Enum, capacidadMedica: int)
     +gets()
     +sets()
 
@@ -49,9 +49,8 @@ class Médico{
 
 class Defensor{
     -fuerza: int
-    +calcularConsumoRecursos(): double
-    +calcularProbabilidadExito(): double
-    +describirHabilidad(): String
+    +Defensor(rut: String, nombre: String, apellido: String, username: String,
+                  password: String, rango: Enum, fuerza: int)
     +gets()
     +sets()
 }
@@ -63,11 +62,14 @@ interface IAccionSupervivencia{
 }
 Habitante"1"...|>"1"IAccionSupervivencia: implementa
 
-class ListaNexoMision{
+class ListaNexoMisiones{
     -head: NodoMision
     -cantElementos: int
+    +ListaNexoMisiones()
+    +agregarInicio(nuevo: Mision): boolean
+    +obtener(dato: Mision): NodoMision
 }
-ListaNexoMision"1"--->"0..1"NodoMision: tiene
+ListaNexoMisiones"1"--->"0..1"NodoMision: tiene
 
 class NodoMision{
     -dato: Mision
@@ -80,26 +82,27 @@ NodoMision"1"--->"1"NodoMision: Siguiente
 NodoMision"1"--->"1"Mision: tiene
 
 class Mision{
-    -rutHabitante: String
-    -idSuministro: int
+    -habitante: Habitante
+    -suministro: Suministro
     -fecha: String
     -cantidadRecuperada: int
     -resultado: String
-    +Mision(rutHabitante: String, idSuministro: int,
+    -fechaHoy: LocalDateTime
+    +Mision(habitante: Habitante, idSuministro: int,
      fecha: String, cantidadRecuperada: int, resultado: String)
     +gets()
     +sets()
 }
 
-class ListaSuministro{
-    -listaSuministro: Habitante[]
+class ListaSuministros{
+    -listaSuministros: Suministro[]
     -cantActualSum: int
     -cantMaxSum: int
-    +ListaSuministro(cantMaxSum: int)
+    +ListaSuministros(cantMaxSum: int)
     +agregarSuministro(s: Suministro): boolean
     +buscarSuministro(pos: int): Suministro
 }
-ListaSuministro"1"o--->"0..100"Suministro: posee
+ListaSuministros"1"o--->"0..100"Suministro: posee
 
 class Suministro{
     -id: int
@@ -114,20 +117,20 @@ class Suministro{
 }
 
 
-class ISistemaRefugioExodo{
-    -listaHabitante: ListaHabitante
-    -listaSuministro: ListaSuministro
-    -listaNexoMision: ListaNexoMision
-    +ISistemaRefugioExodo():
+class SistemaRefugioExodoImpl{
+    -listaHabitantes: ListaHabitantes
+    -listaSuministros: ListaSuministros
+    -listaNexoMisiones: ListaNexoMisiones
+    +SistemaRefugioExodoImpl():
 }
-ISistemaRefugioExodo"1"...|>"1"SistemaRefugioExodo: implementa
-ISistemaRefugioExodo"1"--->"1"ListaNexoMision: posee
-ISistemaRefugioExodo"1"--->"1"ListaSuministro: posee
-ISistemaRefugioExodo"1"--->"1"ListaHabitante: posee
+SistemaRefugioExodoImpl"1"...|>"1"SistemaRefugioExodo: implementa
+SistemaRefugioExodoImpl"1"--->"1"ListaNexoMisiones: posee
+SistemaRefugioExodoImpl"1"--->"1"ListaSuministros: posee
+SistemaRefugioExodoImpl"1"--->"1"ListaHabitantes: posee
 
 interface SistemaRefugioExodo{
-    +cargaDeDatos(): void
+    +cargaDeDatos(): String
     +datosCargados(): boolean
-    +registrarSuperviviente(): void
+    +registrarSuperviviente(): boolean
 }
 @enduml
