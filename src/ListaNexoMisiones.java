@@ -34,4 +34,9 @@ public class ListaNexoMisiones {
         }
         return null;
     }
+
+    public int getCantDatos() {
+        return this.cantElementos;
+    }
+
 }

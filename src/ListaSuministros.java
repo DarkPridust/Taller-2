@@ -30,7 +30,7 @@ public class ListaSuministros {
     }
 
     public Suministro obtenerSumPorId(int id){
-        for(int i = 0; i < this.cantActualMesa; i++){
+        for(int i = 0; i < this.cantActualSum; i++){
             if (listaSuministros[i].getId() == id){
                 return listaSuministros[i];
             }
@@ -38,4 +38,7 @@ public class ListaSuministros {
         return null;
     }
 
+    public int getCantActualSum() {
+        return cantActualSum;
+    }
 }

@@ -51,4 +51,8 @@ public class ListaHabitantes {
         }
         return null;
     }
+
+    public int getCantActualHab() {
+        return cantActualHab;
+    }
 }
