@@ -5,5 +5,4 @@ public interface SistemaRefugioExodo {
     boolean datosCargados();
     String registrarSuperviviente();
     String mostrarSuministrosDisponibles();
-    boolean solicitarDatosSuministro(int id, int cantidad);
 }

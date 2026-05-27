@@ -19,9 +19,6 @@ abstract class Habitante{
     -rango: Enum
     +Habitante(rut: String, nombre: String, apellido: String, username: String,
     password: String, rango: Enum)
-    +calcularConsumoRecursos(): double
-    +calcularProbabilidadExito(): double
-    +describirHabilidad(): String
     +gets()
     +sets()
 }

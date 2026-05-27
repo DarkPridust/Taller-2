@@ -73,18 +73,7 @@ public abstract class Habitante implements IAccionSupervivencia{
         this.rango = rango;
     }
 
-    @Override
-    public double calcularConsumoRecursos() {
-        return 0;
-    }
-
-    @Override
-    public double calcularProbabilidadExito() {
-        return 0;
-    }
-
-    @Override
-    public String describirHabilidad() {
-        return "";
+    public String getNombreCompleto() {
+        return nombre + " " + apellido;
     }
 }

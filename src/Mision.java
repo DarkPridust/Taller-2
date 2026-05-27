@@ -56,4 +56,12 @@ public class Mision {
     public void setResultado(String resultado) {
         this.resultado = resultado;
     }
+
+    public LocalDate getFechaHoy() {
+        return fechaHoy;
+    }
+
+    public void setFechaHoy(LocalDate fechaHoy) {
+        this.fechaHoy = fechaHoy;
+    }
 }
