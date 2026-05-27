@@ -16,8 +16,9 @@ public class ListaSuministros {
         }
         if(this.buscarSuministro(s.getId()) != null) {
             System.out.println("Ya existe un suministro con la id " + s.getId());
+            return false;
         }
-        this.listaSuministros[this.cantActualSum++] = s;
+        this.listaSuministros[this.cantActualSum] = s;
         this.cantActualSum++;
         return true;
     }

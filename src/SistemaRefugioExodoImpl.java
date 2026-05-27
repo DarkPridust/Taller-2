@@ -202,6 +202,15 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             opcion1 = StdIn.readInt();
             switch(opcion1){
                 case 1:
+                    System.out.println(mostrarSuministrosDisponibles());
+                    System.out.println("Ingrese el id del suministro que desea buscar: ");
+                    int id = StdIn.readInt();
+                    System.out.println("Ingrese la cantidad de suministros que desea buscar: ");
+                    int cantidad = StdIn.readInt();
+                    if(solicitarDatosSuministro(id, cantidad)){
+
+                    }
+                    break;
                 case 6:
                     StdOut.println("Volviendo al menú anterior.");
                     break;
@@ -247,5 +256,53 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         }
         listaHabitantes.agregarHabitante(superviviente);
         return "Se ha registrado el superviviente en el sistema.";
+    }
+
+    @Override
+    public String mostrarSuministrosDisponibles() {
+        if(listaNexoMisiones.getCantDatos() == 0){
+            String noHayMisiones = "Actualmente no existen misiones registradas";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("---- [ Suministros Disponibles ] ----").append("\n");;
+        for(int i = 0; i < listaSuministros.getCantActualSum(); i++){
+            Suministro sum = listaSuministros.buscarSuministro(i);
+            if(sum != null){
+                if(sum.getEstado().equalsIgnoreCase("Disponible")){
+                    sb.append("ID: ").append(sum.getId());
+                    sb.append("| Tipo: ").append(sum.getTipo());
+                    sb.append("| Descripción: ").append(sum.getDescripcion()).append("\n");
+
+                    sb.append("       | Peso: ").append(sum.getPeso());
+                    sb.append("  | Cantidad Disponible: ").append(sum.getCantidad());
+                    sb.append("  | Estado: ").append((sum.getEstado())).append("\n");
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean solicitarDatosSuministro(int id, int cantidad) {
+        if(cantidad <= 0){
+            System.out.println("Error, no se aceptan cantidades negativas o iguales a cero");
+            return false;
+        }
+        for(int i = 0; i < listaSuministros.getCantActualSum();i++){
+            Suministro sum = listaSuministros.buscarSuministro(i);
+
+            if(sum == null) continue;
+
+            if(sum.getId() == id){
+                   if(cantidad <= sum.getCantidad()){
+                       return true;
+                   }
+            } else {
+                System.out.println("Error, la cantidad elegida supera el stock actual");
+                return false;
+            }
+        }
+        System.out.println("Error, el id indicado no se encuentra dentro de los suministros disponibles");
+        return false;
     }
 }
