@@ -26,7 +26,6 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             if (!archivosValidos) {
                 System.out.println("Advertencia: Uno o más archivos están vacíos.");
             }
-            iniciarSistema();
         } catch (FileNotFoundException e) {
             System.out.println("Error: No se encontraron los archivos necesarios para que funcione el sistema.");
         }
@@ -80,12 +79,14 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                 try {
                     int id = regEnt.getInt();
                     String tipo = regEnt.getString();
-                    String descripcion = regEnt.getString();
-                    double peso = regEnt.getDouble();
-                    int cantidad = regEnt.getInt();
-                    String estado = regEnt.getString();
-                    Suministro suministro = new Suministro(id, tipo, descripcion, peso, cantidad, estado);
-                    listaSuministros.agregarSuministro(suministro);
+                    if (tipo.equals("Comida") || tipo.equals("Medicina") || tipo.equals("Municion")) {
+                        String descripcion = regEnt.getString();
+                        double peso = regEnt.getDouble();
+                        int cantidad = regEnt.getInt();
+                        String estado = regEnt.getString();
+                        Suministro suministro = new Suministro(id, tipo, descripcion, peso, cantidad, estado);
+                        listaSuministros.agregarSuministro(suministro);
+                    }
                 } catch (Exception e) {
                     return "Error al agregar un suministro: " + e.getMessage();
                 }
@@ -207,48 +208,13 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             opcion1 = StdIn.readInt();
             switch(opcion1){
                 case 1:
-                    System.out.println(mostrarSuministrosDisponibles());
-                    System.out.println("Ingrese el id del suministro que desea buscar: ");
-                    int id = StdIn.readInt();
-                    System.out.println("Ingrese la cantidad de suministros que desea buscar: ");
-                    int cantidad = StdIn.readInt();
-                    Suministro sum = listaSuministros.obtenerSumPorId(id);
-                    if(sum == null){
-                        System.out.println("El suministro que quiere buscar no existe.");
-                        return;
-                    }
-                    if (cantidad <= 0) {
-                        System.out.println("La cantidad ingresada debe ser mayor a 0.");
-                        return;
-                    }else if (cantidad > sum.getCantidad()) {
-                        System.out.println("La cantidad ingresada supera el stock actual.");
-                        return;
-                    }
-                    String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                    String resultado = "";
-                    Random r = new Random();
-                    double random = r.nextDouble();
-                    double probabilidadFinal = habitante.calcularProbabilidadExito();
-                    if(random < probabilidadFinal){
-                        resultado = "Exitosa";
-                        System.out.println("La misión ha sido exitosa, se han recuperado la cantidad recuperada total.");
-                        if (sum.getCantidad() == 0){
-                            sum.setEstado("Agotado");
-                        }
-                        sum.setCantidad(sum.getCantidad()-cantidad);
-                        System.out.println("Creando comprobante de la misión...");
-                        Mision mision = new Mision(habitante, sum, fecha, cantidad, resultado);
-                        this.listaNexoMisiones.agregarInicio(mision);
-                        System.out.println(comprobanteMision(mision));
-                    }else {
-                        resultado = "Fallida";
-                        Mision mision = new Mision(habitante, sum, fecha, 0, resultado);
-                        this.listaNexoMisiones.agregarInicio(mision);
-                        System.out.println("La misión ha sido fallida, se han perdido la cantidad recuperada.");
-                    }
+                    System.out.println(registrarNuevaMision(habitante));
                     break;
                 case 2:
-                    System.out.println(consultarHistorial(nombreUsuario));
+                    System.out.println(consultarHistorial(habitante));
+                    break;
+                case 4:
+                    administrarInventario(habitante);
                     break;
                 case 6:
                     StdOut.println("Volviendo al menú anterior.");
@@ -298,6 +264,46 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     @Override
+    public String registrarNuevaMision(Habitante usuario) {
+        System.out.println(mostrarSuministrosDisponibles());
+        System.out.println("Ingrese el id del suministro que desea buscar: ");
+        int id = StdIn.readInt();
+        System.out.println("Ingrese la cantidad de suministros que desea buscar: ");
+        int cantidad = StdIn.readInt();
+        Suministro sum = listaSuministros.obtenerSumPorId(id);
+        if(sum == null){
+            return "El suministro que quiere buscar no existe.";
+        }
+        if (cantidad <= 0) {
+            return "La cantidad ingresada debe ser mayor a 0.";
+        }else if (cantidad > sum.getCantidad()) {
+            return "La cantidad ingresada supera el stock actual.";
+        }
+        String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String resultado = "";
+        Random r = new Random();
+        double random = r.nextDouble();
+        double probabilidadFinal = usuario.calcularProbabilidadExito();
+        if(random < probabilidadFinal){
+            resultado = "Exitosa";
+            System.out.println("La misión ha sido exitosa, se han recuperado la cantidad recuperada total.");
+            if (sum.getCantidad() == 0){
+                sum.setEstado("Agotado");
+            }
+            sum.setCantidad(sum.getCantidad()-cantidad);
+            System.out.println("Creando comprobante de la misión...");
+            Mision mision = new Mision(usuario, sum, fecha, cantidad, resultado);
+            this.listaNexoMisiones.agregarInicio(mision);
+            return comprobanteMision(mision);
+        }else {
+            resultado = "Fallida";
+            Mision mision = new Mision(usuario, sum, fecha, cantidad, resultado);
+            this.listaNexoMisiones.agregarInicio(mision);
+            return "La misión ha sido fallida, se han perdido la cantidad recuperada.";
+        }
+    }
+
+    @Override
     public String mostrarSuministrosDisponibles() {
         if(listaNexoMisiones.getCantDatos() == 0){
              return "Actualmente no existen misiones registradas";
@@ -308,13 +314,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             Suministro sum = listaSuministros.buscarSuministro(i);
             if(sum != null){
                 if(sum.getEstado().equalsIgnoreCase("Disponible")){
-                    sb.append("ID: ").append(sum.getId());
-                    sb.append("  | Tipo: ").append(sum.getTipo());
-                    sb.append("  | Descripción: ").append(sum.getDescripcion()).append("\n");
-
-                    sb.append("       | Peso: ").append(sum.getPeso()).append(" kg");
-                    sb.append("  | Cantidad Disponible: ").append(sum.getCantidad());
-                    sb.append("  | Estado: ").append((sum.getEstado())).append("\n");
+                    sb.append(sum.toString());
                 }
             }
         }
@@ -322,31 +322,42 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     public String comprobanteMision(Mision m) {
-        return "\n" +
-                "*****************************************************\n" +
-                "            COMPROBANTE DE MISION\n"+
-                "Superviviente: " + m.getHabitante().getNombreCompleto() + " " + m.getHabitante().describirHabilidad() + "\n" +
-                "Suministro: " + m.getSuministro().getId() + " - " + m.getSuministro().getDescripcion() + "\n" +
-                "Cantidad buscada: " + m.getCantidadRecuperada() + "  |  Recuperada: " + m.getCantidadRecuperada() + "\n" +
-                "Fecha: " + m.getFecha() + "\n" +
-                "Resultado: " + m.getResultado().toUpperCase() + "\n" +
-                "*****************************************************\n";
+        if (m.getResultado().equals("Fallida")) {
+            return "\n" +
+                    "*****************************************************\n" +
+                    "            COMPROBANTE DE MISION\n"+
+                    "Superviviente: " + m.getHabitante().getNombreCompleto() + " " + m.getHabitante().describirHabilidad() + "\n" +
+                    "Suministro: " + m.getSuministro().getId() + " - " + m.getSuministro().getDescripcion() + "\n" +
+                    "Cantidad buscada: " + m.getCantidadRecuperada() + "  |  Recuperada: " + m.getCantidadPerdida() + "\n" +
+                    "Fecha: " + m.getFecha() + "\n" +
+                    "Resultado: " + m.getResultado().toUpperCase() + "\n" +
+                    "*****************************************************\n";
+        }else{
+            return "\n" +
+                    "*****************************************************\n" +
+                    "            COMPROBANTE DE MISION\n"+
+                    "Superviviente: " + m.getHabitante().getNombreCompleto() + " " + m.getHabitante().describirHabilidad() + "\n" +
+                    "Suministro: " + m.getSuministro().getId() + " - " + m.getSuministro().getDescripcion() + "\n" +
+                    "Cantidad buscada: " + m.getCantidadRecuperada() + "  |  Recuperada: " + m.getCantidadRecuperada() + "\n" +
+                    "Fecha: " + m.getFecha() + "\n" +
+                    "Resultado: " + m.getResultado().toUpperCase() + "\n" +
+                    "*****************************************************\n";
+        }
     }
 
-    public String consultarHistorial(String usuario){
-        Habitante superviviente = listaHabitantes.buscarHabitantePorUsuario(usuario);
+    public String consultarHistorial(Habitante usuario){
         int misionesHechas = 0;
         int exitos = 0;
         int fallidos = 0;
         int acumuladorCantRecuperadas = 0;
-        int porcentaje;
+        double porcentaje;
         listaNexoMisiones.ordenarMisiones();
         for (int i = 0; i < listaNexoMisiones.getCantDatos(); i++) {
             Mision m = listaNexoMisiones.obtenerPorPosicion(i);
             if (m == null){
                 return "La lista está vacía.";
             }else{
-                if(m.getHabitante().getRut().equals(superviviente.getRut())){
+                if(m.getHabitante().getRut().equals(usuario.getRut())){
                     System.out.println(comprobanteMision(m));
                     if(m.getResultado().equals("Exitosa")){
                         exitos += exitos + 1;
@@ -354,17 +365,106 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                         fallidos += fallidos + 1;
                     }
                     acumuladorCantRecuperadas += m.getCantidadRecuperada();
-                    misionesHechas += misionesHechas + 1;
+                    misionesHechas = misionesHechas + 1;
                 }
             }
         }
-        porcentaje = ((exitos * listaNexoMisiones.getCantDatos())/100);
+        porcentaje = (double) exitos / listaNexoMisiones.getCantDatos();
+        porcentaje *= 100;
+
         StringBuilder sb = new StringBuilder();
-        sb.append("\n");
-        sb.append("Total de misiones realizadas: ").append(listaNexoMisiones.getCantDatos()).append("\n");
+        sb.append("Total de misiones realizadas: ").append(misionesHechas).append("\n");
         sb.append("Misiones exitosas: ").append(exitos).append("  |  Misiones fallidas: ").append(fallidos).append("\n");
         sb.append("Total de unidades recuperadas: ").append(acumuladorCantRecuperadas).append("\n");
-        sb.append("Tasa de éxito: ").append(porcentaje).append("%").append("\n");
+        sb.append("Tasa de éxito: ").append(porcentaje).append("%");
         return sb.toString();
+    }
+
+    @Override
+    public void administrarInventario(Habitante usuario) {
+        if (usuario.getRango().name().equalsIgnoreCase("Leyenda")) {
+            int opcionA = 0;
+            do {
+                StdOut.println("===== Administración de mesas =====");
+                StdOut.println("[1] Agregar nueva Mesa");
+                StdOut.println("[2] Cambiar estado de una mesa");
+                StdOut.println("[3] Volver al menu anterior");
+                StdOut.println("Ingrese una opción: ");
+                try {
+                    opcionA  = StdIn.readInt();
+                    switch (opcionA) {
+                        case 1:
+                            System.out.println(agregarSuministro());
+                            break;
+                        case 2:
+                            System.out.println(cambiarEstado());
+
+                            break;
+                        case 3:
+                            System.out.println("Volviendo al menú anterior...");
+                            break;
+                        default:
+                            System.out.println("La opción ingresada es invalida");
+                    }
+                } catch(InputMismatchException e){
+                    System.out.println("Debe de ingresar un digito entero.");
+                    break;
+                }
+            }while (opcionA != 3);
+        } else {
+            System.out.println("Acceso restringido. Solo disponible para clientes Platino.");
+        }
+
+
+    }
+
+    @Override
+    public String agregarSuministro() {
+        do{
+            System.out.println("------- Crear Mesa --------");
+            System.out.println("Ingrese el tipo de suministro: ");
+            String tipo = StdIn.readString();
+            if (tipo.equalsIgnoreCase("Comida") || tipo.equalsIgnoreCase("Medicina") || tipo.equalsIgnoreCase("Municion")) {
+                System.out.println("Ingrese la descripción del suministro: ");
+                String descripcion = StdIn.readString();
+                System.out.println("Ingresa el peso del suministro: ");
+                double peso = StdIn.readDouble();
+                if(peso <= 0){
+                    return "El peso debe ser mayor a 0";
+                }
+                System.out.println("Ingresa la cantidad del suministro: ");
+                int cantidad = StdIn.readInt();
+                if(cantidad <= 0){
+                    return "El cantidad debe ser mayor a 0";
+                }
+                System.out.println("Ingrese el estado del suministro: ");
+                String estado = StdIn.readString();
+                int idSum = listaSuministros.getCantActualSum() + 1;
+                Suministro sum = new Suministro(idSum, tipo, descripcion, peso, cantidad, estado);
+                listaSuministros.agregarSuministro(sum);
+                return "El suministro ha sido agregado al sistema con exito";
+            } else {
+                return "ERROR: Tipo de suministro no válido.";
+            }
+        }while(false);
+    }
+
+    @Override
+    public String cambiarEstado() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("---- [ Suministros ] ----").append("\n");
+        for(int i = 0; i < listaSuministros.getCantActualSum(); i++){
+            Suministro sum = listaSuministros.buscarSuministro(i);
+            if(sum != null){
+                sb.append(sum.toString());
+            }
+        }
+        System.out.print(sb.toString());
+        System.out.print("Ingrese el id del suministro que desee cambiar de estado: ");
+        int id = StdIn.readInt();
+        if(id < 1 || id > listaSuministros.getCantActualSum()){
+
+        }
+
     }
 }

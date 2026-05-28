@@ -62,4 +62,13 @@ public class Suministro {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    @Override
+    public String toString() {
+        return "ID: " + getId() +
+                "  | Tipo: " + getTipo() + "  | Descripción: " + getDescripcion() + "\n" +
+                "       | Peso: " + getPeso() + " kg" +
+                "  | Cantidad Disponible: " + getCantidad() +
+                "  | Estado: " + getEstado() + "\n";
+    }
 }

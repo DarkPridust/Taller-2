@@ -7,6 +7,7 @@ public class Mision {
     private int cantidadRecuperada;
     private String resultado;
     private LocalDate fechaHoy;
+    private int cantidadPerdida;
 
     public Mision(Habitante habitante, Suministro suministro, String fecha, int cantidadRecuperada, String resultado) {
         this.habitante = habitante;
@@ -15,6 +16,7 @@ public class Mision {
         this.cantidadRecuperada = cantidadRecuperada;
         this.resultado = resultado;
         this.fechaHoy = LocalDate.now();
+        this.cantidadPerdida = 0;
     }
 
     public Habitante getHabitante() {
@@ -63,5 +65,9 @@ public class Mision {
 
     public void setFechaHoy(LocalDate fechaHoy) {
         this.fechaHoy = fechaHoy;
+    }
+
+    public int getCantidadPerdida() {
+        return cantidadPerdida;
     }
 }

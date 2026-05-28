@@ -11,12 +11,12 @@ class ListaHabitantes{
 ListaHabitantes"1"o--->"0..100"Habitante: posee
 
 abstract class Habitante{
-    -rut: String
-    -nombre: String
-    -apellido: String
-    -username: String
-    -password: String
-    -rango: Enum
+    #rut: String
+    #nombre: String
+    #apellido: String
+    #username: String
+    #password: String
+    #rango: Enum
     +Habitante(rut: String, nombre: String, apellido: String, username: String,
     password: String, rango: Enum)
     +gets()

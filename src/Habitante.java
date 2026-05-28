@@ -1,11 +1,11 @@
 public abstract class Habitante implements IAccionSupervivencia{
-    private String rut;
-    private String nombre;
-    private String apellido;
-    private String nombreUsuario;
-    private String contrasenia;
-    private String rol;
-    private Rango rango;
+    protected String rut;
+    protected String nombre;
+    protected String apellido;
+    protected String nombreUsuario;
+    protected String contrasenia;
+    protected String rol;
+    protected Rango rango;
 
     public Habitante(String rut, String nombre, String apellido, String nombreUsuario, String contrasenia, String rol, Rango rango) {
         this.rut = rut;
