@@ -9,4 +9,7 @@ public interface SistemaRefugioExodo {
     void administrarInventario(Habitante usuario);
     String agregarSuministro();
     String cambiarEstado();
+    String mostrarEstadisticas();
+    String suministrosRecuperados();
+    String supervivienteMejorExito();
 }

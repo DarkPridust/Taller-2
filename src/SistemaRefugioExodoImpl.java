@@ -216,6 +216,9 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                 case 4:
                     administrarInventario(habitante);
                     break;
+                case 5:
+                    System.out.println(mostrarEstadisticas());
+                    break;
                 case 6:
                     StdOut.println("Volviendo al menú anterior.");
                     break;
@@ -465,6 +468,87 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         if(id < 1 || id > listaSuministros.getCantActualSum()){
 
         }
+        return "a"; //momentaneo para probar
+    }
 
+    @Override
+    public String mostrarEstadisticas() {
+        return  suministrosRecuperados() + "\n" +
+                supervivienteMejorExito();
+    }
+
+    @Override
+    public String suministrosRecuperados() {
+        // Total de suministros recuperado en misiones exitosas
+        int SumRecuperado = 0;
+        for(int i=0;i< listaNexoMisiones.getCantDatos();i++){
+            Mision m = listaNexoMisiones.obtenerPorPosicion(i);
+            if(m.getResultado().equalsIgnoreCase("exitosa")){
+                SumRecuperado += m.getCantidadRecuperada();
+            }
+        }
+        if(SumRecuperado==0){
+            return "No se ha recuperado ni un suministro";
+        }
+        return "Se han recuperado un total de: "+String.valueOf(SumRecuperado);
+    }
+
+    @Override
+    public String supervivienteMejorExito() {
+        //Superviviente con mayor tasa de exito
+        String[] TopSuperviviente = new String[listaHabitantes.getCantActualHab()];
+        int cantTops = 0;
+        double maxTasaExito = -1.0;
+
+        for(int i=0;i< listaHabitantes.getCantActualHab();i++){
+            String rutHabitante = listaHabitantes.obtenerHabitante(i).getRut();
+            int cantExitos = 0;
+            int cantMisionesRealizadas = 0;
+
+            for(int j=0;j< listaNexoMisiones.getCantDatos();j++) {
+                Mision m =listaNexoMisiones.obtenerPorPosicion(j);
+                String rutMision = m.getHabitante().getRut();
+
+                if (rutMision.equals(rutHabitante)) {
+                    cantMisionesRealizadas++;
+                    if (m.getResultado().equalsIgnoreCase("exitosa")) {
+                        cantExitos++;
+                    }
+                }
+            }
+            if(cantMisionesRealizadas>0){
+                double tasaExito = (double) cantExitos/cantMisionesRealizadas;
+
+                if(tasaExito > maxTasaExito){
+                    maxTasaExito = tasaExito;
+                    cantTops = 0;
+                    TopSuperviviente[cantTops] = rutHabitante;
+                    cantTops++;
+                }
+                else if(tasaExito == maxTasaExito){
+                    TopSuperviviente[cantTops] = rutHabitante;
+                    cantTops++;
+                }
+            }
+        }
+        if(cantTops == 0){
+            return "Ni un superviviente ha realizado misiones hasta el momento...";
+        }
+        if(cantTops == 1){
+            Habitante sup = listaHabitantes.buscarHabitantePorRut(TopSuperviviente[0]);
+            return "El superviviente con mayor tasa de exitos es:" +
+                    "Nombre: " + sup.getNombreCompleto() +
+                    "Rol: " + sup.getRol() +
+                    "Rengo: " + sup.getRango() +
+                    "Con una tasa de exito de: " + (maxTasaExito * 100) + "%";
+
+        }
+        String empate = "Hubo un empate con: " + (maxTasaExito * 100) + "%"+ "\n" + "Los supervivientes con mayor tasa de exitos son:" + "\n";
+        for(int i=0;i<cantTops;i++){
+            empate += "Nombre: "+ " " + listaHabitantes.buscarHabitantePorRut(TopSuperviviente[i]).getNombreCompleto() + ", " +
+                        "Rol: "+ " " + listaHabitantes.buscarHabitantePorRut(TopSuperviviente[i]).getRol() + ", "  +
+                        "Rango: "+ " " + listaHabitantes.buscarHabitantePorRut(TopSuperviviente[i]).getRango() + "\n";
+        }
+        return empate;
     }
 }
