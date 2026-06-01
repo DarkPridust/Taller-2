@@ -10,6 +10,4 @@ public interface SistemaRefugioExodo {
     String agregarSuministro();
     String cambiarEstado();
     String mostrarEstadisticas();
-    String suministrosRecuperados();
-    String supervivienteMejorExito();
 }

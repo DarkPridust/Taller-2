@@ -466,34 +466,60 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         System.out.print("Ingrese el id del suministro que desee cambiar de estado: ");
         int id = StdIn.readInt();
         if(id < 1 || id > listaSuministros.getCantActualSum()){
-
+            return "La id ingresada está fuera del alcance de la lista.";
+        } else {
+            Suministro sum = listaSuministros.buscarSuministro(id);
+            String estado = sum.getEstado();
+            if(estado.equals("Disponible")) {
+                sum.setEstado("Agotado");
+                return "El suministro con el id " + id + ", se cambio su estado a Agotado";
+            }
+            if (estado.equals("Agotado")) {
+                sum.setEstado("Disponible");
+                return "El suministro con el id " + id + ", se cambio su estado a Disponible";
+            }
         }
-        return "a"; //momentaneo para probar
+        return "Volviendo al menú";
     }
 
     @Override
     public String mostrarEstadisticas() {
-        return  suministrosRecuperados() + "\n" +
-                supervivienteMejorExito();
-    }
+        StringBuilder sb = new StringBuilder();
+        sb.append("La cantidad de misiones realizadas dentro del sistema es: ").append(listaNexoMisiones.getCantDatos()).append("\n");
 
-    @Override
-    public String suministrosRecuperados() {
-        // Total de suministros recuperado en misiones exitosas
-        int SumRecuperado = 0;
+        int sumRecuperado = 0;
         for(int i=0;i< listaNexoMisiones.getCantDatos();i++){
             Mision m = listaNexoMisiones.obtenerPorPosicion(i);
-            if(m.getResultado().equalsIgnoreCase("exitosa")){
-                SumRecuperado += m.getCantidadRecuperada();
+            sumRecuperado += m.getCantidadRecuperada();
+        }
+        if(sumRecuperado==0){
+            sb.append("No se ha recuperado ni un suministro").append("\n");
+        }
+        sb.append("El total de suministros recuperados en total es de: ").append(sumRecuperado).append("\n");
+        sb.append(supervivienteMejorExito()).append("\n");
+        sb.append(suministroMásBuscado()).append("\n");
+
+        int misionesHechas = 0;
+        int exitos = 0;
+        double porcentaje;
+        for (int i = 0; i < listaNexoMisiones.getCantDatos(); i++) {
+            Mision m = listaNexoMisiones.obtenerPorPosicion(i);
+            if (m == null){
+                sb.append("La lista se encuentra vacía.");
+            }else{
+                if(m.getResultado().equals("Exitosa")) {
+                    exitos += exitos + 1;
+                }
+                misionesHechas = misionesHechas + 1;
             }
         }
-        if(SumRecuperado==0){
-            return "No se ha recuperado ni un suministro";
-        }
-        return "Se han recuperado un total de: "+String.valueOf(SumRecuperado);
+        porcentaje = (double) exitos / listaNexoMisiones.getCantDatos();
+        porcentaje *= 100;
+        sb.append("El porcentaje global de misiones exitosas sobre el total de las misiones: ").append(porcentaje).append("%");
+
+        return sb.toString();
     }
 
-    @Override
     public String supervivienteMejorExito() {
         //Superviviente con mayor tasa de exito
         String[] TopSuperviviente = new String[listaHabitantes.getCantActualHab()];
@@ -532,7 +558,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             }
         }
         if(cantTops == 0){
-            return "Ni un superviviente ha realizado misiones hasta el momento...";
+            return "Ningún superviviente ha realizado misiones hasta el momento...";
         }
         if(cantTops == 1){
             Habitante sup = listaHabitantes.buscarHabitantePorRut(TopSuperviviente[0]);
@@ -548,6 +574,39 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             empate += "Nombre: "+ " " + listaHabitantes.buscarHabitantePorRut(TopSuperviviente[i]).getNombreCompleto() + ", " +
                         "Rol: "+ " " + listaHabitantes.buscarHabitantePorRut(TopSuperviviente[i]).getRol() + ", "  +
                         "Rango: "+ " " + listaHabitantes.buscarHabitantePorRut(TopSuperviviente[i]).getRango() + "\n";
+        }
+        return empate;
+    }
+
+    public String suministroMásBuscado(){
+        int[] suministros = new int[listaSuministros.getCantActualSum()];
+        int posSuministros = 0;
+        for (int i = 0; i < listaNexoMisiones.getCantDatos(); i++) {
+            int idSum = listaSuministros.buscarSuministro(i).getId();
+            for (int j = 0; j < listaNexoMisiones.getCantDatos(); j++) {
+                Mision m = listaNexoMisiones.obtenerPorPosicion(j);
+                int idSumMision = m.getSuministro().getId();
+                if(idSum == idSumMision){
+                    suministros[posSuministros] =  idSum;
+                    posSuministros++;
+                }
+            }
+        }
+        if(posSuministros == 0){
+            return "No se ha realizado misiones hasta el momento...";
+        }
+        if(posSuministros == 1){
+            Suministro sum = listaSuministros.obtenerSumPorId(suministros[0]);
+            return "El suministro más buscado es:" +
+                    "Id: " + sum.getId() +
+                    "Tipo: " + sum.getTipo() +
+                    "Descripción: " + sum.getDescripcion();
+        }
+        String empate = "Hubo un empate entre los suministros más buscados" + "\n" + "Los suministros más buscados son:" + "\n";
+        for(int i = 0; i < posSuministros ; i++){
+            empate += "Id: " + listaSuministros.obtenerSumPorId(suministros[i]).getId() + ", " +
+                    "Tipo: " + listaSuministros.obtenerSumPorId(suministros[i]).getTipo() + ", "  +
+                    "Descripción: " + listaSuministros.obtenerSumPorId(suministros[i]).getDescripcion() + "\n";
         }
         return empate;
     }
