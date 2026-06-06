@@ -1,3 +1,4 @@
+// Imports de todas las utilidades
 import ucn.ArchivoEntrada;
 import ucn.Registro;
 import ucn.StdIn;
@@ -10,11 +11,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 import java.util.Random;
 
+/**
+ *
+ */
 public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     private ListaHabitantes listaHabitantes;
     private ListaSuministros listaSuministros;
     private ListaNexoMisiones listaNexoMisiones;
 
+    /**
+     *
+     * @throws IOException
+     */
     public SistemaRefugioExodoImpl() throws IOException {
         boolean archivosValidos = false;
         this.listaHabitantes = new ListaHabitantes(100);
@@ -32,6 +40,11 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
 
     }
 
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
     @Override
     public String cargaDeDatos() throws IOException {
         ArchivoEntrada archivoEntradaHabitantes = new ArchivoEntrada("habitantes.txt");
@@ -123,6 +136,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         return "Se han leido los archivos correctamente";
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean datosCargados() {
         return listaHabitantes.getCantActualHab()> 0
@@ -130,6 +147,9 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                 && listaSuministros.getCantActualSum() > 0;
     }
 
+    /**
+     *
+     */
     public void iniciarSistema() {
         int opcion = 0;
         do{
@@ -182,6 +202,12 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         }while(true);
     }
 
+    /**
+     *
+     * @param nombreUsuario
+     * @param contrasenia
+     * @return
+     */
     public boolean iniciarSesion(String nombreUsuario, String contrasenia){
         if(listaHabitantes.buscarHabitantePorUsuario(nombreUsuario) != null){
             if(listaHabitantes.buscarHabitantePorUsuario(nombreUsuario).getContrasenia().equals(contrasenia)){
@@ -191,6 +217,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         return false;
     }
 
+    /**
+     *
+     * @param nombreUsuario
+     */
     public void menuUsuario(String nombreUsuario){
         int opcion1 = 0;
         Habitante habitante = listaHabitantes.buscarHabitantePorUsuario(nombreUsuario);
@@ -229,6 +259,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         }while(opcion1 != 6);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String registrarSuperviviente() {
         Habitante superviviente;
@@ -266,6 +300,11 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         return "Se ha registrado el superviviente en el sistema.";
     }
 
+    /**
+     *
+     * @param usuario
+     * @return
+     */
     @Override
     public String registrarNuevaMision(Habitante usuario) {
         System.out.println(mostrarSuministrosDisponibles());
@@ -306,6 +345,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String mostrarSuministrosDisponibles() {
         if(listaNexoMisiones.getCantDatos() == 0){
@@ -324,6 +367,11 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         return sb.toString();
     }
 
+    /**
+     *
+     * @param m
+     * @return
+     */
     public String comprobanteMision(Mision m) {
         if (m.getResultado().equals("Fallida")) {
             return "\n" +
@@ -348,6 +396,11 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         }
     }
 
+    /**
+     *
+     * @param usuario
+     * @return
+     */
     public String consultarHistorial(Habitante usuario){
         int misionesHechas = 0;
         int exitos = 0;
@@ -383,6 +436,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         return sb.toString();
     }
 
+    /**
+     *
+     * @param usuario
+     */
     @Override
     public void administrarInventario(Habitante usuario) {
         if (usuario.getRango().name().equalsIgnoreCase("Leyenda")) {
@@ -421,6 +478,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
 
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String agregarSuministro() {
         do{
@@ -452,6 +513,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         }while(false);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String cambiarEstado() {
         StringBuilder sb = new StringBuilder();
@@ -482,6 +547,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         return "Volviendo al menú";
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String mostrarEstadisticas() {
         StringBuilder sb = new StringBuilder();
@@ -520,6 +589,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         return sb.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public String supervivienteMejorExito() {
         //Superviviente con mayor tasa de exito
         String[] TopSuperviviente = new String[listaHabitantes.getCantActualHab()];
@@ -578,6 +651,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         return empate;
     }
 
+    /**
+     *
+     * @return
+     */
     public String suministroMásBuscado(){
         int[] suministros = new int[listaSuministros.getCantActualSum()];
         int posSuministros = 0;
