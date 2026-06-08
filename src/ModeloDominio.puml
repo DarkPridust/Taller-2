@@ -32,7 +32,7 @@ entity Suministro{
 Habitante"1"--->"1"Suministro: administra >
 note on link: Solo los supervivientes con rango leyenda\npueden administrar los suministros
 
-Habitante"1"--->"1"Mision: participa >
+Habitante"1"--->"1..*"Mision: participa >
 
 Mision"1"--->"1..*"Suministro: obtiene >
 

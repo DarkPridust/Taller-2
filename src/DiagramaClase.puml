@@ -1,11 +1,15 @@
 @startuml
+left to right direction
 class ListaHabitantes{
     -listaHabitantes: Habitante[]
     -cantActualHab: int
     -cantMaxHab: int
     +ListaHabitante(cantMaxHab: int)
     +agregarHabitante(h: Habitante): boolean
-    +buscarHabitante(pos: int): Habitante
+    +obtenerHabitante(pos: int): Habitante
+    +buscarHabitantePorRut(rut: String): Habitante
+    +buscarHabitantePorUsuario(nombreUsuario: String): Habitante
+    +getCantActualHab(): int
 }
 
 ListaHabitantes"1"o--->"0..100"Habitante: posee
@@ -65,6 +69,10 @@ class ListaNexoMisiones{
     +ListaNexoMisiones()
     +agregarInicio(nuevo: Mision): boolean
     +obtener(dato: Mision): NodoMision
+    +esVacio(): boolean
+    +obtenerPorPosicion(): Mision
+    +ordenarMisiones(): void
+    +getCantidadDatos(): int
 }
 ListaNexoMisiones"1"--->"0..1"NodoMision: tiene
 
@@ -85,8 +93,9 @@ class Mision{
     -cantidadRecuperada: int
     -resultado: String
     -fechaHoy: LocalDateTime
+    -cantidadPerdida: int
     +Mision(habitante: Habitante, idSuministro: int,
-     fecha: String, cantidadRecuperada: int, resultado: String)
+     fecha: String, cantidadRecuperada: int, resultado: String, cantidadPerdida: int)
     +gets()
     +sets()
 }
@@ -98,6 +107,8 @@ class ListaSuministros{
     +ListaSuministros(cantMaxSum: int)
     +agregarSuministro(s: Suministro): boolean
     +buscarSuministro(pos: int): Suministro
+    +obtenerSumPorId(id int): Suministro
+    +getCantActualSum(): int
 }
 ListaSuministros"1"o--->"0..100"Suministro: posee
 
@@ -128,6 +139,21 @@ SistemaRefugioExodoImpl"1"--->"1"ListaHabitantes: posee
 interface SistemaRefugioExodo{
     +cargaDeDatos(): String
     +datosCargados(): boolean
-    +registrarSuperviviente(): boolean
+    +registrarSuperviviente(): String
+    +registrarNuevaMision(usuario: Habitante): String
+    +administrarSuministroDisponibles(): String
+    +administrarInventario(usuario: Habitante): void
+    +agregarSuministro(): String
+    +cambiarEstado(): String
+    +mostrarEstadisticas(): String
+
 }
+
+Enum Rango{
+    NOVATO
+    VETERANO
+    LEYENDA
+}
+
+Habitante  ..|> Rango
 @enduml
