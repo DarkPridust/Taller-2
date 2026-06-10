@@ -1,22 +1,22 @@
 /**
- * Representa a la clase Médico extendida de la super clase habitante
+ * Representa a la clase Médico extendida de la super clase habitante.
  */
 public class Medico extends Habitante{
     /**
-     * Capacidad medica del Médico
+     * Capacidad medica del Médico.
      */
     private int capacidadMedica;
 
     /**
-     * Contructor de la clase Médico
-     * @param rut               Rut del Médico
-     * @param nombre            Nombre del Médico
-     * @param apellido          Apellido del Médico
-     * @param nombreUsuario     Usuario del Médico
-     * @param contrasenia       Contraseña del Médico
-     * @param rol               Rol del Médico
-     * @param rango             Rango del Médico
-     * @param capacidadMedica   Capacidad medica del Médico
+     * Contructor de la clase Médico.
+     * @param rut               Rut del Médico.
+     * @param nombre            Nombre del Médico.
+     * @param apellido          Apellido del Médico.
+     * @param nombreUsuario     Usuario del Médico.
+     * @param contrasenia       Contraseña del Médico.
+     * @param rol               Rol del Médico.
+     * @param rango             Rango del Médico.
+     * @param capacidadMedica   Capacidad medica del Médico.
      */
     public Medico(String rut, String nombre, String apellido, String nombreUsuario, String contrasenia,
                   String rol, Rango rango, int capacidadMedica) {
@@ -25,24 +25,24 @@ public class Medico extends Habitante{
     }
 
     /**
-     * Obtiene la Capacidad medica del Médico
-     * @return un entero con la capacidad medica del Médico
+     * Obtiene la Capacidad medica del Médico.
+     * @return un entero con la capacidad medica del Médico.
      */
     public int getCapacidadMedica() {
         return capacidadMedica;
     }
 
     /**
-     * Establece la capacidad medica del Médico
-     * @param capacidadMedica un entero con la capacidad medica del Médico
+     * Establece la capacidad medica del Médico.
+     * @param capacidadMedica un entero con la capacidad medica del Médico.
      */
     public void setCapacidadMedica(int capacidadMedica) {
         this.capacidadMedica = capacidadMedica;
     }
 
     /**
-     * Calcula el consumo de recursos del Medico
-     * @return un entero con el consumo de recursos del Médico
+     * Calcula el consumo de recursos del Medico.
+     * @return un entero con el consumo de recursos del Médico.
      */
     @Override
     public double calcularConsumoRecursos() {
@@ -50,8 +50,8 @@ public class Medico extends Habitante{
     }
 
     /**
-     * Calcula la probabilidad de exito del Médico
-     * @return un decimal con la probabilidad de exito
+     * Calcula la probabilidad de exito del Médico.
+     * @return un decimal con la probabilidad de exito.
      */
     @Override
     public double calcularProbabilidadExito() {
@@ -67,8 +67,8 @@ public class Medico extends Habitante{
     }
 
     /**
-     * Obtiene la descripcion de la habilidad del Médico
-     * @return un String con la descripción de la habilidad del Médico
+     * Obtiene la descripcion de la habilidad del Médico.
+     * @return un String con la descripción de la habilidad del Médico.
      */
     @Override
     public String describirHabilidad() {

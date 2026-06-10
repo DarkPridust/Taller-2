@@ -1,18 +1,18 @@
 /**
- * Representa la identidad ListaNexoMisiones
+ * Representa la identidad ListaNexoMisiones.
  */
 public class ListaNexoMisiones {
     /**
-     * Primer NodoMision de la ListaNexoMisiones
+     * Primer NodoMision de la ListaNexoMisiones.
      */
     private NodoMision head;
     /**
-     * Cantidad actual de NodoMision
+     * Cantidad actual de NodoMision.
      */
     private int cantElementos;
 
     /**
-     * Constructor de la ListaNexoMisiones
+     * Constructor de la ListaNexoMisiones.
      */
     public ListaNexoMisiones() {
         this.head = null;
@@ -20,17 +20,17 @@ public class ListaNexoMisiones {
     }
 
     /**
-     * Verifica si la lista esta vacia
-     * @return un booleano con el resultado
+     * Verifica si la lista esta vacia.
+     * @return un booleano con el resultado.
      */
     public boolean esVacio() {
         return this.head == null;
     }
 
     /**
-     * Agrega la inicio un nuevo NodoMision
-     * @param nuevo un objeto de tipo NodoMision
-     * @return      un booleano con el resultado
+     * Agrega la inicio un nuevo NodoMision.
+     * @param nuevo un objeto de tipo NodoMision.
+     * @return      un booleano con el resultado.
      */
     public boolean agregarInicio(Mision nuevo) {
         NodoMision nuevoNodo = new NodoMision(nuevo);
@@ -47,9 +47,9 @@ public class ListaNexoMisiones {
     }
 
     /**
-     * Busca un NodoMision por su dato
-     * @param dato  un objeto de tipo Mision
-     * @return      un objeto de tipo NodoMision
+     * Busca un NodoMision por su dato.
+     * @param dato  un objeto de tipo Mision.
+     * @return      un objeto de tipo NodoMision.
      */
     public NodoMision obtener(Mision dato) {
         NodoMision aux = this.head;
@@ -63,9 +63,9 @@ public class ListaNexoMisiones {
     }
 
     /**
-     * Obtiene una Mision por su posición
-     * @param pos   un entero con la posición de la Mision
-     * @return      un obtejo de tipo Mision
+     * Obtiene una Mision por su posición.
+     * @param pos   un entero con la posición de la Mision.
+     * @return      un obtejo de tipo Mision.
      */
     public Mision obtenerPorPosicion(int pos) {
         if(esVacio()){
@@ -85,7 +85,7 @@ public class ListaNexoMisiones {
     }
 
     /**
-     * Ordena las misiones por su fecha de realización
+     * Ordena las misiones por su fecha de realización.
      */
     public void ordenarMisiones(){
         if(esVacio()){
@@ -109,8 +109,8 @@ public class ListaNexoMisiones {
     }
 
     /**
-     * Obtiene la cantidad de elementos de la ListaNexoMisiones
-     * @return un entero con la cantidad de elementos de la ListaNexoMisiones
+     * Obtiene la cantidad de elementos de la ListaNexoMisiones.
+     * @return un entero con la cantidad de elementos de la ListaNexoMisiones.
      */
     public int getCantDatos() {
         return this.cantElementos;

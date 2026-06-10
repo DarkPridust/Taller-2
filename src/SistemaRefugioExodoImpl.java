@@ -12,7 +12,7 @@ import java.util.InputMismatchException;
 import java.util.Random;
 
 /**
- *
+ * Se aoocia el implementador con la interface.
  */
 public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     private ListaHabitantes listaHabitantes;
@@ -20,7 +20,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     private ListaNexoMisiones listaNexoMisiones;
 
     /**
-     *
+     * Función que inicializa las listas si se lograron leer con exito los archivos txt.
      * @throws IOException
      */
     public SistemaRefugioExodoImpl() throws IOException {
@@ -41,8 +41,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @return
+     * Función que carga los datos de los archivos txt (habitantes, misiones, suministros).
+     * @return un String con las diferentes posibilidades al leer el archivo txt.
      * @throws IOException
      */
     @Override
@@ -137,8 +137,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @return
+     * Este metodo verifica si los contenedores tienen al menos un elemento cargado al sistema.
+     * @return un booleano que indica si existen elementos cargados.
      */
     @Override
     public boolean datosCargados() {
@@ -148,7 +148,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
+     * Función que espliega el menú inicial del sistema
      */
     public void iniciarSistema() {
         int opcion = 0;
@@ -203,10 +203,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @param nombreUsuario
-     * @param contrasenia
-     * @return
+     * Funcion que permite iniciar sesion si las credenciales entregadas estan correctamente asociadas a un habitante.
+     * @param nombreUsuario un String con el nombre de usuario.
+     * @param contrasenia un String con la contraseña del usuario.
+     * @return un booleano que determina si se logro iniciar sesion o no.
      */
     public boolean iniciarSesion(String nombreUsuario, String contrasenia){
         if(listaHabitantes.buscarHabitantePorUsuario(nombreUsuario) != null){
@@ -218,8 +218,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @param nombreUsuario
+     * Funcion que despliega el menú de usuario luego de iniciar sesion.
+     * @param nombreUsuario un String con el nombre de usuario.
      */
     public void menuUsuario(String nombreUsuario){
         int opcion1 = 0;
@@ -260,8 +260,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @return
+     * Función que permite registrar un nuevo cliente.
+     * @return un String con la confirmacion del registro del nuevo superviviente.
      */
     @Override
     public String registrarSuperviviente() {
@@ -275,7 +275,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         String apellido = StdIn.readString();
         StdOut.println("Ingrese el nombre de usuario del superviviente: ");
         String nombreUsuario = StdIn.readString();
-        StdOut.println("Ingrese el rol del superviviente: ");
+        StdOut.println("Ingrese el rol del superviviente(Explorador/Medico/Defensor): ");
         String rol = StdIn.readString();
 
         String rutSinVerificador = rutSuperviviente.replaceAll("[^0-9]", "");
@@ -301,9 +301,9 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @param usuario
-     * @return
+     * Función que permite registrar una nueva mision.
+     * @param usuario un string con el nombre de usuario.
+     * @return un String con la confirmacion del registro de la nueva mision.
      */
     @Override
     public String registrarNuevaMision(Habitante usuario) {
@@ -346,8 +346,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @return
+     * Funcion que indica los suministros totales con el estado "disponible",
+     * @return un String con los suministros disponibles actualmente.
      */
     @Override
     public String mostrarSuministrosDisponibles() {
@@ -368,9 +368,9 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @param m
-     * @return
+     * Funcion que despliega el comprobante con la informacion de la mision realizada.
+     * @param m un objeto de tipo Mision.
+     * @return un String con el resultado tras realizar una mision.
      */
     public String comprobanteMision(Mision m) {
         if (m.getResultado().equals("Fallida")) {
@@ -397,9 +397,9 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @param usuario
-     * @return
+     * Función que muestra el historial asociado al superviviente.
+     * @param usuario un String con el nombre de usuario.
+     * @return un String con el historial del superviviente.
      */
     public String consultarHistorial(Habitante usuario){
         int misionesHechas = 0;
@@ -437,8 +437,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @param usuario
+     * Funcion que permite administrar el inventario de suministros.
+     * @param usuario un string con el nombre de usuario.
      */
     @Override
     public void administrarInventario(Habitante usuario) {
@@ -479,14 +479,14 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @return
+     * Función que permite agregar un suministro.
+     * @return un String con los posibles resultados al intentar agregar un suministro.
      */
     @Override
     public String agregarSuministro() {
         do{
-            System.out.println("------- Crear Mesa --------");
-            System.out.println("Ingrese el tipo de suministro: ");
+            System.out.println("------- Crear Suministro --------");
+            System.out.println("Ingrese el tipo de suministro(Comida/Medicina/Municion): ");
             String tipo = StdIn.readString();
             if (tipo.equalsIgnoreCase("Comida") || tipo.equalsIgnoreCase("Medicina") || tipo.equalsIgnoreCase("Municion")) {
                 System.out.println("Ingrese la descripción del suministro: ");
@@ -514,8 +514,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @return
+     * Funcion que permite cambiar el estado de un suministro.
+     * @return un String con los posibles resultados al intenrar cambiar el estado de un suministro.
      */
     @Override
     public String cambiarEstado() {
@@ -548,8 +548,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @return
+     * Funcion que despliega las estadisticas del sistema.
+     * @return un String con las estadisticas del sistema.
      */
     @Override
     public String mostrarEstadisticas() {
@@ -590,8 +590,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @return
+     * Funcion que identifica el/los supervivientes con mayor tasa de exitos
+     * @return un String con el/los supervivientes con mayor tasa de exitos.
      */
     public String supervivienteMejorExito() {
         //Superviviente con mayor tasa de exito
@@ -652,8 +652,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     *
-     * @return
+     * Funcion que identifica el suministro más buscado del sistema
+     * @return un String con el suministro más buscado del sistema.
      */
     public String suministroMásBuscado(){
         int[] suministros = new int[listaSuministros.getCantActualSum()];

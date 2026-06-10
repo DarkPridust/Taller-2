@@ -1,45 +1,45 @@
 import java.time.LocalDate;
 
 /**
- * Representa a la identidad Mision
+ * Representa a la identidad Mision.
  */
 public class Mision {
     /**
-     * Habitante asociado a la Mision
+     * Habitante asociado a la Mision.
      */
     private Habitante habitante;
     /**
-     * Suministro asociado a la Mision
+     * Suministro asociado a la Mision.
      */
     private Suministro suministro;
     /**
-     * Fecha de la Mision
+     * Fecha de la Mision.
      */
     private String fecha;
     /**
-     * Cantidad de Suministro Recuperado de la Mision
+     * Cantidad de Suministro Recuperado de la Mision.
      */
     private int cantidadRecuperada;
     /**
-     * Resultado de la Mision
+     * Resultado de la Mision.
      */
     private String resultado;
     /**
-     * Fecha actual de la Mision
+     * Fecha actual de la Mision.
      */
     private LocalDate fechaHoy;
     /**
-     * Cantidad perdida de Suministro de la Mision
+     * Cantidad perdida de Suministro de la Mision.
      */
     private int cantidadPerdida;
 
     /**
-     * Contructor de la clase Mision
-     * @param habitante             Habitante que participa en la Mision
-     * @param suministro            Suministro Recuperado de la Mision
-     * @param fecha                 Fecha en la que se realizo la Mision
-     * @param cantidadRecuperada    Cantidad de Suministro recuperado de la Mision
-     * @param resultado             Resultado de la Mision
+     * Contructor de la clase Mision.
+     * @param habitante             Habitante que participa en la Mision.
+     * @param suministro            Suministro Recuperado de la Mision.
+     * @param fecha                 Fecha en la que se realizo la Mision.
+     * @param cantidadRecuperada    Cantidad de Suministro recuperado de la Mision.
+     * @param resultado             Resultado de la Mision.
      */
     public Mision(Habitante habitante, Suministro suministro, String fecha, int cantidadRecuperada, String resultado) {
         this.habitante = habitante;
@@ -52,24 +52,24 @@ public class Mision {
     }
 
     /**
-     * Obtiene al Habitante asociado a la Mision
-     * @return un objeto de tipo Habitante
+     * Obtiene al Habitante asociado a la Mision.
+     * @return un objeto de tipo Habitante.
      */
     public Habitante getHabitante() {
         return habitante;
     }
 
     /**
-     * Obtiene el Suministro asociado a la Mision
-     * @return un objeto de tipo Suministro
+     * Obtiene el Suministro asociado a la Mision.
+     * @return un objeto de tipo Suministro.
      */
     public Suministro getSuministro() {
         return suministro;
     }
 
     /**
-     * Obtiene la fecha en la que se realizo la Mision
-     * @return un string con la fecha en la que se realizo la Mision
+     * Obtiene la fecha en la que se realizo la Mision.
+     * @return un string con la fecha en la que se realizo la Mision.
      */
     public String getFecha() {
         return fecha;
@@ -77,16 +77,16 @@ public class Mision {
 
 
     /**
-     * Obtiene la cantidad de Suministro recuperados de la Mision
-     * @return un entero con la cantidad de Suministro recuperado
+     * Obtiene la cantidad de Suministro recuperados de la Mision.
+     * @return un entero con la cantidad de Suministro recuperado.
      */
     public int getCantidadRecuperada() {
         return cantidadRecuperada;
     }
 
     /**
-     * Obtiene el resultado de la Mision
-     * @return un string con el resultado de la Mision
+     * Obtiene el resultado de la Mision.
+     * @return un string con el resultado de la Mision.
      */
     public String getResultado() {
         return resultado;
@@ -95,8 +95,8 @@ public class Mision {
 
 
     /**
-     * Obtiene la fecha actual del dispositivo de la Mision
-     * @return un objeto de tipo LocalDate
+     * Obtiene la fecha actual del dispositivo de la Mision.
+     * @return un objeto de tipo LocalDate.
      */
     public LocalDate getFechaHoy() {
         return fechaHoy;
@@ -104,8 +104,8 @@ public class Mision {
 
 
     /**
-     * Obtiene la cantidad perdida de Suministro de la Mision
-     * @return un entero con la cantidad perdida se Suministro de la Mision
+     * Obtiene la cantidad perdida de Suministro de la Mision.
+     * @return un entero con la cantidad perdida se Suministro de la Mision.
      */
     public int getCantidadPerdida() {
         return cantidadPerdida;
