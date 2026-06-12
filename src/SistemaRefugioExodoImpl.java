@@ -1,8 +1,5 @@
 // Imports de todas las utilidades
-import ucn.ArchivoEntrada;
-import ucn.Registro;
-import ucn.StdIn;
-import ucn.StdOut;
+import ucn.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,7 +9,7 @@ import java.util.InputMismatchException;
 import java.util.Random;
 
 /**
- * Se aoocia el implementador con la interface.
+ * Se asocia el implementador con la interface.
  */
 public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     private ListaHabitantes listaHabitantes;
@@ -137,7 +134,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     * Este metodo verifica si los contenedores tienen al menos un elemento cargado al sistema.
+     * Función que verifica si los contenedores tienen al menos un elemento cargado al sistema.
      * @return un booleano que indica si existen elementos cargados.
      */
     @Override
@@ -148,9 +145,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     * Función que espliega el menú inicial del sistema
+     * Función que despliega el menú inicial del sistema
      */
-    public void iniciarSistema() {
+    @Override
+    public void iniciarSistema() throws IOException {
         int opcion = 0;
         do{
             StdOut.println("==== REFUGIO ÉXODO ====");
@@ -190,6 +188,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                         StdOut.println("--------------------");
                         StdOut.println("Cerrando el sistema");
                         StdOut.println("--------------------");
+                        subirDatos();
                         System.exit(0);
                     default:
                         StdOut.println("La opción ingresada es incorrecta");
@@ -203,11 +202,12 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     * Funcion que permite iniciar sesion si las credenciales entregadas estan correctamente asociadas a un habitante.
+     * Función que permite iniciar sesión si las credenciales entregadas están correctamente asociadas a un habitante.
      * @param nombreUsuario un String con el nombre de usuario.
      * @param contrasenia un String con la contraseña del usuario.
      * @return un booleano que determina si se logro iniciar sesion o no.
      */
+    @Override
     public boolean iniciarSesion(String nombreUsuario, String contrasenia){
         if(listaHabitantes.buscarHabitantePorUsuario(nombreUsuario) != null){
             if(listaHabitantes.buscarHabitantePorUsuario(nombreUsuario).getContrasenia().equals(contrasenia)){
@@ -218,9 +218,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     * Funcion que despliega el menú de usuario luego de iniciar sesion.
+     * Función que despliega el menú de usuario luego de iniciar sesión.
      * @param nombreUsuario un String con el nombre de usuario.
      */
+    @Override
     public void menuUsuario(String nombreUsuario){
         int opcion1 = 0;
         Habitante habitante = listaHabitantes.buscarHabitantePorUsuario(nombreUsuario);
@@ -243,6 +244,9 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                 case 2:
                     System.out.println(consultarHistorial(habitante));
                     break;
+                case 3:
+                    System.out.println(subirRango(habitante));
+                    break;
                 case 4:
                     administrarInventario(habitante);
                     break;
@@ -261,7 +265,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
 
     /**
      * Función que permite registrar un nuevo cliente.
-     * @return un String con la confirmacion del registro del nuevo superviviente.
+     * @return un String con la confirmación del registro del nuevo superviviente.
      */
     @Override
     public String registrarSuperviviente() {
@@ -301,9 +305,9 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     * Función que permite registrar una nueva mision.
-     * @param usuario un string con el nombre de usuario.
-     * @return un String con la confirmacion del registro de la nueva mision.
+     * Función que permite registrar una nueva misión.
+     * @param usuario un objeto de tipo Habitante.
+     * @return un String con la confirmación del registro de la nueva misión.
      */
     @Override
     public String registrarNuevaMision(Habitante usuario) {
@@ -368,10 +372,11 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     * Funcion que despliega el comprobante con la informacion de la mision realizada.
+     * Función que despliega el comprobante con la información de la misión realizada.
      * @param m un objeto de tipo Mision.
-     * @return un String con el resultado tras realizar una mision.
+     * @return un String con el resultado tras realizar una misión.
      */
+    @Override
     public String comprobanteMision(Mision m) {
         if (m.getResultado().equals("Fallida")) {
             return "\n" +
@@ -398,9 +403,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
 
     /**
      * Función que muestra el historial asociado al superviviente.
-     * @param usuario un String con el nombre de usuario.
+     * @param usuario un objeto de tipo Habitante.
      * @return un String con el historial del superviviente.
      */
+    @Override
     public String consultarHistorial(Habitante usuario){
         int misionesHechas = 0;
         int exitos = 0;
@@ -435,10 +441,42 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         sb.append("Tasa de éxito: ").append(porcentaje).append("%");
         return sb.toString();
     }
+    /**
+     * Función que verifica y permite subir de rango del superviviente
+     * @param usuario un objeto de tipo Habitante.
+     */
+    @Override
+    public String subirRango(Habitante usuario){
+        String rut =  usuario.getRut();
+        String rangoActual = usuario.getRango().toString().toUpperCase();
+        Rango rango = Rango.valueOf(rangoActual);
+        int misionesExitosas = listaNexoMisiones.contarMisionesExitosasPorRut(rut, rangoActual);
+
+        if (rango == Rango.LEYENDA){
+            return "Ya tienes el rango máximo";
+        }
+
+        System.out.println("=== Subir de Rango ===");
+        System.out.println("Rango actual: " + rangoActual);
+        System.out.println("Misiones exitosas: " + misionesExitosas);
+        System.out.println("¿Deseas subir de rango? (Si/No)");
+        String respuesta = StdIn.readString();
+        if (respuesta.equals("Si")){
+            if(rango.puedeSubirRango(misionesExitosas)){
+                Rango siguienteRango = rango.rangoSiguiente();
+                usuario.setRango(siguienteRango);
+                return "Su rango ha sido ascendido a " + siguienteRango.name() + " exitosamente";
+            } else {
+                return "Aún no cumples los requisitos para subir de rango";
+            }
+        }else {
+            return "Mantuviste tu rango actual: " + rangoActual;
+        }
+    }
 
     /**
-     * Funcion que permite administrar el inventario de suministros.
-     * @param usuario un string con el nombre de usuario.
+     * Función que permite administrar el inventario de suministros.
+     * @param usuario un objeto de tipo Habitante.
      */
     @Override
     public void administrarInventario(Habitante usuario) {
@@ -514,8 +552,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     * Funcion que permite cambiar el estado de un suministro.
-     * @return un String con los posibles resultados al intenrar cambiar el estado de un suministro.
+     * Función que permite cambiar el estado de un suministro.
+     * @return un String con los posibles resultados al intentar cambiar el estado de un suministro.
      */
     @Override
     public String cambiarEstado() {
@@ -548,8 +586,8 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     * Funcion que despliega las estadisticas del sistema.
-     * @return un String con las estadisticas del sistema.
+     * Función que despliega las estadísticas del sistema.
+     * @return un String con las estadísticas del sistema.
      */
     @Override
     public String mostrarEstadisticas() {
@@ -566,7 +604,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         }
         sb.append("El total de suministros recuperados en total es de: ").append(sumRecuperado).append("\n");
         sb.append(supervivienteMejorExito()).append("\n");
-        sb.append(suministroMásBuscado()).append("\n");
+        sb.append(suministroMasBuscado()).append("\n");
 
         int misionesHechas = 0;
         int exitos = 0;
@@ -590,9 +628,10 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     * Funcion que identifica el/los supervivientes con mayor tasa de exitos
-     * @return un String con el/los supervivientes con mayor tasa de exitos.
+     * Función que identifica el/los supervivientes con mayor tasa de éxitos
+     * @return un String con el/los supervivientes con mayor tasa de éxitos.
      */
+    @Override
     public String supervivienteMejorExito() {
         //Superviviente con mayor tasa de exito
         String[] TopSuperviviente = new String[listaHabitantes.getCantActualHab()];
@@ -652,10 +691,11 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     }
 
     /**
-     * Funcion que identifica el suministro más buscado del sistema
+     * Función que identifica el suministro más buscado del sistema
      * @return un String con el suministro más buscado del sistema.
      */
-    public String suministroMásBuscado(){
+    @Override
+    public String suministroMasBuscado(){
         int[] suministros = new int[listaSuministros.getCantActualSum()];
         int posSuministros = 0;
         for (int i = 0; i < listaNexoMisiones.getCantDatos(); i++) {
@@ -686,5 +726,62 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                     "Descripción: " + listaSuministros.obtenerSumPorId(suministros[i]).getDescripcion() + "\n";
         }
         return empate;
+    }
+
+    /**
+     * Función que carga la información del sistema dentro de los archivos txt
+     */
+    @Override
+    public void subirDatos() throws IOException {
+        ArchivoSalida archivoSalidaHabitante = new ArchivoSalida("habitante.txt");
+        for(Habitante habitante : listaHabitantes.getListaHabitantes()){
+            if (habitante != null){
+                Registro regSal = new Registro(7);
+
+                regSal.agregarCampo(habitante.getRut());
+                regSal.agregarCampo(habitante.getNombre());
+                regSal.agregarCampo(habitante.getApellido());
+                regSal.agregarCampo(habitante.getNombreUsuario());
+                regSal.agregarCampo(habitante.getContrasenia());
+                regSal.agregarCampo(habitante.getRol());
+                regSal.agregarCampo(habitante.getRango().toString());
+
+                archivoSalidaHabitante.writeRegistro(regSal);
+            }
+        }
+
+        ArchivoSalida archivoSalidaSum = new ArchivoSalida("suministro.txt");
+        for(Suministro sum : listaSuministros.getListaSuministros()){
+            if (sum != null){
+                Registro regSal = new Registro(6);
+
+                regSal.agregarCampo(sum.getId());
+                regSal.agregarCampo(sum.getTipo());
+                regSal.agregarCampo(sum.getDescripcion());
+                regSal.agregarCampo(sum.getPeso());
+                regSal.agregarCampo(sum.getCantidad());
+                regSal.agregarCampo(sum.getEstado());
+
+                archivoSalidaSum.writeRegistro(regSal);
+            }
+        }
+
+        ArchivoSalida archivoSalidaMisiones = new ArchivoSalida("jugadas.txt");
+        for(Mision mision : listaNexoMisiones.getListaMisiones()) {
+            if (mision != null) {
+                Registro regSal = new Registro(5);
+
+                regSal.agregarCampo(mision.getHabitante().getRut());
+                regSal.agregarCampo(mision.getSuministro().getId());
+                regSal.agregarCampo(mision.getFecha());
+                regSal.agregarCampo(mision.getCantidadRecuperada());
+                regSal.agregarCampo(mision.getResultado());
+
+                archivoSalidaMisiones.writeRegistro(regSal);
+            }
+        }
+        archivoSalidaHabitante.close();
+        archivoSalidaSum.close();
+        archivoSalidaMisiones.close();
     }
 }

@@ -10,6 +10,7 @@ class ListaHabitantes{
     +buscarHabitantePorRut(rut: String): Habitante
     +buscarHabitantePorUsuario(nombreUsuario: String): Habitante
     +getCantActualHab(): int
+    +getListaHabitantes(): Habitante[]
 }
 
 ListaHabitantes"1"o--->"0..100"Habitante: posee
@@ -72,6 +73,8 @@ class ListaNexoMisiones{
     +esVacio(): boolean
     +obtenerPorPosicion(): Mision
     +ordenarMisiones(): void
+    +contarMisionesExitosasPorRut(rut: String, rangoActual: String): int
+    +getListaMisiones(): Mision[]
     +getCantidadDatos(): int
 }
 ListaNexoMisiones"1"--->"0..1"NodoMision: tiene
@@ -109,6 +112,7 @@ class ListaSuministros{
     +buscarSuministro(pos: int): Suministro
     +obtenerSumPorId(id int): Suministro
     +getCantActualSum(): int
+    +getListaSuministros(): Suministro[]
 }
 ListaSuministros"1"o--->"0..100"Suministro: posee
 
@@ -139,13 +143,22 @@ SistemaRefugioExodoImpl"1"--->"1"ListaHabitantes: posee
 interface SistemaRefugioExodo{
     +cargaDeDatos(): String
     +datosCargados(): boolean
+    +iniciarSistema(): void
+    +iniciarSesion(nombreUsuario: String, contrasenia: String): boolean
+    +menuUsuario(nombreUsuario: String): void
     +registrarSuperviviente(): String
     +registrarNuevaMision(usuario: Habitante): String
-    +administrarSuministroDisponibles(): String
+    +comprobanteMision(Mision m)
+    +mostrarSuministroDisponibles(): String
+    +consultarHistorial(usuario: Habitante) String
+    +subirRango(usuario: Habitante): String
     +administrarInventario(usuario: Habitante): void
     +agregarSuministro(): String
     +cambiarEstado(): String
     +mostrarEstadisticas(): String
+    +supervivienteMejorExito(): String
+    +suministroMasBuscado(): String
+    +subirDatos(): void
 
 }
 
@@ -153,6 +166,8 @@ Enum Rango{
     NOVATO
     VETERANO
     LEYENDA
+    +puedeSubirRango(): boolean
+    +rangoSiguiente(): Rango
 }
 
 Habitante  ..|> Rango

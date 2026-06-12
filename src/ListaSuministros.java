@@ -77,4 +77,12 @@ public class ListaSuministros {
     public int getCantActualSum() {
         return cantActualSum;
     }
+
+    /**
+     * Obtiene los suministros de su contenedor
+     * @return un objeto Suministro
+     */
+    public Suministro[] getListaSuministros() {
+        return listaSuministros;
+    }
 }

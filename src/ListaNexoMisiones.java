@@ -108,6 +108,49 @@ public class ListaNexoMisiones {
         }while(ordenado);
     }
 
+    public int contarMisionesExitosasPorRut(String rut, String rangoActual){
+        if (esVacio()){
+            return 0;
+        }
+        int contador = 0;
+        NodoMision aux = this.head;
+        while(aux != null){
+            Mision actual = aux.getDato();
+            if (actual.getHabitante().getRut().equals(rut)
+                    && actual.getHabitante().getRango().name().equals(rangoActual)
+                    && actual.getResultado().equals("Exitosa")){
+                contador++;
+            }
+            aux = aux.getSiguiente();
+        }
+        return contador;
+    }
+
+    /**
+     * Obtiene las misiones de su lista
+     * @return un objeto Mision
+     */
+    public Mision[] getListaMisiones(){
+        int cantidad = 0;
+        NodoMision aux = this.head;
+        while (aux != null){
+            cantidad++;
+            aux = aux.getSiguiente();
+        }
+
+        Mision[] misiones = new Mision[cantidad];
+
+        aux = this.head;
+        int i = 0;
+        while(aux != null){
+            misiones[i] = aux.getDato();
+            i++;
+            aux = aux.getSiguiente();
+        }
+
+        return misiones;
+    }
+
     /**
      * Obtiene la cantidad de elementos de la ListaNexoMisiones.
      * @return un entero con la cantidad de elementos de la ListaNexoMisiones.

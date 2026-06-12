@@ -95,4 +95,12 @@ public class ListaHabitantes {
     public int getCantActualHab() {
         return cantActualHab;
     }
+
+    /**
+     * Obtiene los habitantes de su contenedor
+     * @return un objeto Habitante
+     */
+    public Habitante[] getListaHabitantes(){
+        return this.listaHabitantes;
+    }
 }
