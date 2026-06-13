@@ -33,6 +33,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error: No se encontraron los archivos necesarios para que funcione el sistema.");
+            System.exit(1);
         }
 
     }
@@ -343,7 +344,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             return comprobanteMision(mision);
         }else {
             resultado = "Fallida";
-            Mision mision = new Mision(usuario, sum, fecha, cantidad, resultado);
+            Mision mision = new Mision(usuario, sum, fecha, 0, resultado);
             this.listaNexoMisiones.agregarInicio(mision);
             return "La misión ha sido fallida, se han perdido la cantidad recuperada.";
         }
@@ -431,7 +432,11 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                 }
             }
         }
-        porcentaje = (double) exitos / listaNexoMisiones.getCantDatos();
+        if(misionesHechas != 0){
+            porcentaje = (double) exitos / misionesHechas;
+        } else {
+            porcentaje = 0;
+        }
         porcentaje *= 100;
 
         StringBuilder sb = new StringBuilder();
@@ -446,14 +451,21 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
      * @param usuario un objeto de tipo Habitante.
      */
     @Override
-    public String subirRango(Habitante usuario){
-        String rut =  usuario.getRut();
+    public String subirRango(Habitante usuario) {
+        String rut = usuario.getRut();
         String rangoActual = usuario.getRango().toString().toUpperCase();
         Rango rango = Rango.valueOf(rangoActual);
         int misionesExitosas = listaNexoMisiones.contarMisionesExitosasPorRut(rut, rangoActual);
 
-        if (rango == Rango.LEYENDA){
+
+        if (rango == Rango.LEYENDA) {
             return "Ya tienes el rango máximo";
+        }
+        if (rango.puedeSubirRango(misionesExitosas)) {
+            System.out.println("Cumples con los requisitos para subir de rango!");
+        } else {
+            System.out.println("No cumples con los requisitos para subir de rango");
+            return "Realiza más misiones para poder subir de rango";
         }
 
         System.out.println("=== Subir de Rango ===");
@@ -461,19 +473,15 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         System.out.println("Misiones exitosas: " + misionesExitosas);
         System.out.println("¿Deseas subir de rango? (Si/No)");
         String respuesta = StdIn.readString();
-        if (respuesta.equals("Si")){
-            if(rango.puedeSubirRango(misionesExitosas)){
+        if (respuesta.equalsIgnoreCase("Si")) {
+            if (rango.puedeSubirRango(misionesExitosas)) {
                 Rango siguienteRango = rango.rangoSiguiente();
                 usuario.setRango(siguienteRango);
                 return "Su rango ha sido ascendido a " + siguienteRango.name() + " exitosamente";
-            } else {
-                return "Aún no cumples los requisitos para subir de rango";
             }
-        }else {
-            return "Mantuviste tu rango actual: " + rangoActual;
         }
+        return "Mantuviste tu rango actual: " + rangoActual;
     }
-
     /**
      * Función que permite administrar el inventario de suministros.
      * @param usuario un objeto de tipo Habitante.
@@ -483,9 +491,9 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         if (usuario.getRango().name().equalsIgnoreCase("Leyenda")) {
             int opcionA = 0;
             do {
-                StdOut.println("===== Administración de mesas =====");
-                StdOut.println("[1] Agregar nueva Mesa");
-                StdOut.println("[2] Cambiar estado de una mesa");
+                StdOut.println("===== Administración de inventario =====");
+                StdOut.println("[1] Agregar nuevo Suministro");
+                StdOut.println("[2] Cambiar estado de un Suministro");
                 StdOut.println("[3] Volver al menu anterior");
                 StdOut.println("Ingrese una opción: ");
                 try {
@@ -529,7 +537,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             if (tipo.equalsIgnoreCase("Comida") || tipo.equalsIgnoreCase("Medicina") || tipo.equalsIgnoreCase("Municion")) {
                 System.out.println("Ingrese la descripción del suministro: ");
                 String descripcion = StdIn.readString();
-                System.out.println("Ingresa el peso del suministro: ");
+                System.out.println("Ingresa el peso del (en kilogramos): ");
                 double peso = StdIn.readDouble();
                 if(peso <= 0){
                     return "El peso debe ser mayor a 0";
@@ -539,8 +547,11 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                 if(cantidad <= 0){
                     return "El cantidad debe ser mayor a 0";
                 }
-                System.out.println("Ingrese el estado del suministro: ");
+                System.out.println("Ingrese el estado del suministro(Disponible/Agotado): ");
                 String estado = StdIn.readString();
+                if(!estado.equalsIgnoreCase("Disponible") && !estado.equalsIgnoreCase("Agotado")){
+                    return "El estado ingresado esta fuera de los disponibles";
+                }
                 int idSum = listaSuministros.getCantActualSum() + 1;
                 Suministro sum = new Suministro(idSum, tipo, descripcion, peso, cantidad, estado);
                 listaSuministros.agregarSuministro(sum);
@@ -571,7 +582,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
         if(id < 1 || id > listaSuministros.getCantActualSum()){
             return "La id ingresada está fuera del alcance de la lista.";
         } else {
-            Suministro sum = listaSuministros.buscarSuministro(id);
+            Suministro sum = listaSuministros.buscarSuministro(id - 1);
             String estado = sum.getEstado();
             if(estado.equals("Disponible")) {
                 sum.setEstado("Agotado");
@@ -592,6 +603,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     @Override
     public String mostrarEstadisticas() {
         StringBuilder sb = new StringBuilder();
+        sb.append("=========================================================== \n");
         sb.append("La cantidad de misiones realizadas dentro del sistema es: ").append(listaNexoMisiones.getCantDatos()).append("\n");
 
         int sumRecuperado = 0;
@@ -615,15 +627,15 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                 sb.append("La lista se encuentra vacía.");
             }else{
                 if(m.getResultado().equals("Exitosa")) {
-                    exitos += exitos + 1;
+                    exitos++;
                 }
                 misionesHechas = misionesHechas + 1;
             }
         }
-        porcentaje = (double) exitos / listaNexoMisiones.getCantDatos();
+        porcentaje = (double) exitos / misionesHechas;
         porcentaje *= 100;
         sb.append("El porcentaje global de misiones exitosas sobre el total de las misiones: ").append(porcentaje).append("%");
-
+        sb.append("\n"+"===========================================================");
         return sb.toString();
     }
 
@@ -681,7 +693,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
                     "Con una tasa de exito de: " + (maxTasaExito * 100) + "%";
 
         }
-        String empate = "Hubo un empate con: " + (maxTasaExito * 100) + "%"+ "\n" + "Los supervivientes con mayor tasa de exitos son:" + "\n";
+        String empate = "Hubo un empate entre los supervivientes con: " + (maxTasaExito * 100) + "% de exito"+ "\n" + "Los supervivientes con mayor tasa de exitos son:" + "\n";
         for(int i=0;i<cantTops;i++){
             empate += "Nombre: "+ " " + listaHabitantes.buscarHabitantePorRut(TopSuperviviente[i]).getNombreCompleto() + ", " +
                         "Rol: "+ " " + listaHabitantes.buscarHabitantePorRut(TopSuperviviente[i]).getRol() + ", "  +
@@ -697,43 +709,55 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
     @Override
     public String suministroMasBuscado(){
         int[] suministros = new int[listaSuministros.getCantActualSum()];
-        int posSuministros = 0;
-        for (int i = 0; i < listaNexoMisiones.getCantDatos(); i++) {
+        int cantSumMasBuscados = 0;
+        int posSumMasBuscado = 0;
+        for(int i=0;i<listaSuministros.getCantActualSum();i++) {
             int idSum = listaSuministros.buscarSuministro(i).getId();
+            int vecesBuscado = 0;
             for (int j = 0; j < listaNexoMisiones.getCantDatos(); j++) {
                 Mision m = listaNexoMisiones.obtenerPorPosicion(j);
-                int idSumMision = m.getSuministro().getId();
-                if(idSum == idSumMision){
-                    suministros[posSuministros] =  idSum;
-                    posSuministros++;
+                if (m.getSuministro().getId() == idSum) {
+                    vecesBuscado++;
+                }
+            }
+
+            if(listaSuministros.getCantActualSum()>0){
+                if (vecesBuscado > cantSumMasBuscados) {
+                    cantSumMasBuscados = vecesBuscado;
+                    posSumMasBuscado = 0;
+                    suministros[posSumMasBuscado] = idSum;
+                    posSumMasBuscado++;
+                }
+                else if (vecesBuscado == cantSumMasBuscados) {
+                    suministros[posSumMasBuscado] = idSum;
+                    posSumMasBuscado++;
                 }
             }
         }
-        if(posSuministros == 0){
-            return "No se ha realizado misiones hasta el momento...";
+            if(cantSumMasBuscados == 0){
+                return "No se ha buscado ningún suministro hasta el momento";
+            }
+            if(posSumMasBuscado == 1){
+                return "El suministro más buscado es: \n" +
+                        "Id: " + suministros[0] + ", " +
+                        "Tipo: " + listaSuministros.obtenerSumPorId(suministros[0]).getTipo() + ", " +
+                        "Descripción: " + listaSuministros.obtenerSumPorId(suministros[0]).getDescripcion() + "\n";
+            }
+            String empate = "Hubo un empate entre los suministros más buscados" + "\n" + "Los suministros más buscados son:" + "\n";
+            for(int i = 0; i < posSumMasBuscado ; i++){
+                empate += "Id: " + listaSuministros.obtenerSumPorId(suministros[i]).getId() + ", " +
+                        "Tipo: " + listaSuministros.obtenerSumPorId(suministros[i]).getTipo() + ", "  +
+                        "Descripción: " + listaSuministros.obtenerSumPorId(suministros[i]).getDescripcion() + "\n";
+            }
+            return empate;
         }
-        if(posSuministros == 1){
-            Suministro sum = listaSuministros.obtenerSumPorId(suministros[0]);
-            return "El suministro más buscado es:" +
-                    "Id: " + sum.getId() +
-                    "Tipo: " + sum.getTipo() +
-                    "Descripción: " + sum.getDescripcion();
-        }
-        String empate = "Hubo un empate entre los suministros más buscados" + "\n" + "Los suministros más buscados son:" + "\n";
-        for(int i = 0; i < posSuministros ; i++){
-            empate += "Id: " + listaSuministros.obtenerSumPorId(suministros[i]).getId() + ", " +
-                    "Tipo: " + listaSuministros.obtenerSumPorId(suministros[i]).getTipo() + ", "  +
-                    "Descripción: " + listaSuministros.obtenerSumPorId(suministros[i]).getDescripcion() + "\n";
-        }
-        return empate;
-    }
 
     /**
      * Función que carga la información del sistema dentro de los archivos txt
      */
     @Override
     public void subirDatos() throws IOException {
-        ArchivoSalida archivoSalidaHabitante = new ArchivoSalida("habitante.txt");
+        ArchivoSalida archivoSalidaHabitante = new ArchivoSalida("habitantes.txt");
         for(Habitante habitante : listaHabitantes.getListaHabitantes()){
             if (habitante != null){
                 Registro regSal = new Registro(7);
@@ -750,7 +774,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             }
         }
 
-        ArchivoSalida archivoSalidaSum = new ArchivoSalida("suministro.txt");
+        ArchivoSalida archivoSalidaSum = new ArchivoSalida("suministros.txt");
         for(Suministro sum : listaSuministros.getListaSuministros()){
             if (sum != null){
                 Registro regSal = new Registro(6);
@@ -766,7 +790,7 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             }
         }
 
-        ArchivoSalida archivoSalidaMisiones = new ArchivoSalida("jugadas.txt");
+        ArchivoSalida archivoSalidaMisiones = new ArchivoSalida("misiones.txt");
         for(Mision mision : listaNexoMisiones.getListaMisiones()) {
             if (mision != null) {
                 Registro regSal = new Registro(5);
