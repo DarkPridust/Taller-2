@@ -537,12 +537,12 @@ public class SistemaRefugioExodoImpl implements SistemaRefugioExodo {
             if (tipo.equalsIgnoreCase("Comida") || tipo.equalsIgnoreCase("Medicina") || tipo.equalsIgnoreCase("Municion")) {
                 System.out.println("Ingrese la descripción del suministro: ");
                 String descripcion = StdIn.readString();
-                System.out.println("Ingresa el peso del (en kilogramos): ");
+                System.out.println("Ingresa el peso del suministro(en kilogramos): ");
                 double peso = StdIn.readDouble();
                 if(peso <= 0){
                     return "El peso debe ser mayor a 0";
                 }
-                System.out.println("Ingresa la cantidad del suministro: ");
+                System.out.println("Ingresa la cantidad del suministro(en unidades): ");
                 int cantidad = StdIn.readInt();
                 if(cantidad <= 0){
                     return "El cantidad debe ser mayor a 0";
